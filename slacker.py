@@ -31,13 +31,17 @@ def create_meeting(slack_client, bot_id, channel):
     slack_client.api_call("chat.postMessage", channel=channel, text="@here *A meeting has been started!*")
     slack_client.api_call("chat.postMessage", channel=channel, text="If you're not at the office, you can join the video call here: http://appear.in/" + channel[1:] + "-meeting")
 
-def raj_time():
-    slack_client.api_call("chat.postMessage", channel="general", text="Oh, look at the time, it's 2:15 already? Raj is going to pick up his kid. Bye Raj!")
+def raj_time(slack_client, bot_id):
+    slack_client.api_call("chat.postMessage", channel="general", text="Oh, look at the time, it's 2:15 already? Raj is going to pick up his kid. Bye Raj! :wave:")
+
+def cold_brew(slack_client, bot_id):
+    slack_client.api_call("chat.postMessage", channel="general", text="\"There's _cold brew_ in the kitchen?! No way!\" :coffee_parrot:")
+
 
 
 def test_locally():
     event = {
-        'action':  'createMeeting',
+        'action':  'coldBrew',
         'channel': 'general'
     }
     context = {
@@ -59,12 +63,19 @@ def slack_handler(event, context):
         print("Posting to #" + channel + ": " + message)
         post_message(slack_client, bot_id, "#"+channel, message)
 
-    if(action == 'createMeeting'):
+    elif(action == 'createMeeting'):
         channel = event['channel']
         print("Creating a meeting in #" + channel)
         create_meeting(slack_client, bot_id, '#'+channel)
 
-    if(action == 'raj_time'):
-        raj_time()
+    elif(action == 'rajTime'):
+        raj_time(slack_client, bot_id)
 
-main()
+    elif(action == 'coldBrew'):
+        cold_brew(slack_client, bot_id)
+
+    else:
+        print("ERROR: No action found: " + action)
+
+
+test_locally()
