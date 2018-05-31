@@ -21,6 +21,8 @@ def connect(oauth_token):
         print("Connection failed. Exception traceback printed above.")
         quit()
 
+
+
 # Posts a message to the general channel
 def post_message(slack_client, bot_id, channel, message):
     slack_client.api_call("chat.postMessage", channel=channel, text=message)
@@ -28,6 +30,10 @@ def post_message(slack_client, bot_id, channel, message):
 def create_meeting(slack_client, bot_id, channel):
     slack_client.api_call("chat.postMessage", channel=channel, text="@here *A meeting has been started!*")
     slack_client.api_call("chat.postMessage", channel=channel, text="If you're not at the office, you can join the video call here: http://appear.in/" + channel[1:] + "-meeting")
+
+def raj_time():
+    slack_client.api_call("chat.postMessage", channel="general", text="Oh, look at the time, it's 2:15 already? Raj is going to pick up his kid. Bye Raj!")
+
 
 def test_locally():
     event = {
@@ -57,5 +63,8 @@ def slack_handler(event, context):
         channel = event['channel']
         print("Creating a meeting in #" + channel)
         create_meeting(slack_client, bot_id, '#'+channel)
+
+    if(action == 'raj_time'):
+        raj_time()
 
 main()
