@@ -25,11 +25,14 @@ def connect(oauth_token):
 def post_message(slack_client, bot_id, channel, message):
     slack_client.api_call("chat.postMessage", channel=channel, text=message)
 
+def create_meeting(slack_client, bot_id, channel):
+    slack_client.api_call("chat.postMessage", channel=channel, text="@here *A meeting has been started!*")
+    slack_client.api_call("chat.postMessage", channel=channel, text="If you're not at the office, you can join the video call here: http://appear.in/" + channel[1:] + "-meeting")
 
 def main():
     event = {
-        'channel': 'general',
-        'message': 'lamoo'
+        'action':  'createMeeting',
+        'channel': 'general'
     }
     context = {
 
@@ -37,16 +40,22 @@ def main():
     slack_handler(event, context)
 
 def slack_handler(event, context):
-    
+
     token = os.environ['SLACKBOT_OAUTH_TOKEN']
-
-    channel = event['channel']
-    message = event['message']
-
-    print("Posting to #" + channel + ": " + message)
+    action = event['action']
 
     slack_client, bot_id = connect(token)
-    post_message(slack_client, bot_id, "#"+channel, message)
+
+    if(action == 'postMessage'):
+        channel = event['channel']
+        message = event['message']
+        print("Posting to #" + channel + ": " + message)
+        post_message(slack_client, bot_id, "#"+channel, message)
+
+    if(action == 'createMeeting'):
+        channel = event['channel']
+        print("Creating a meeting in #" + channel)
+        create_meeting(slack_client, bot_id, '#'+channel)
 
     quit()
 
