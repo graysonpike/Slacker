@@ -11,4 +11,4 @@ To activate that virtual environment, use the below command:
 source <env-folder-name>/bin/activate
 After activating, to install the dependencies run
 
-pip3 install -r requirements.txt# Slacker
+pip3 install -r requirements.txt
